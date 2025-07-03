@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      min-height: 100vh;
+      animation: fadeIn 1.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    header {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 5px #00c6ff; }
+      100% { text-shadow: 0 0 15px #0072ff; }
+    }
+
+    nav ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+      transition: 0.3s;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: #00c6ff;
+      left: 0;
+      bottom: -5px;
+      transition: width 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #00c6ff;
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+      background: linear-gradient(to right, #f7971e, #ffd200);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card p {
+      font-size: 1rem;
+      color: #ddd;
+      line-height: 1.5;
+    }
+
+    footer {
+      background: #1a1a1a;
+      padding: 15px;
+      text-align: center;
+      color: #ccc;
+      font-size: 0.9rem;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-sun-cloud"></i> Weather Dashboard</h1>
+    <nav>
+      <ul>
+        <li><a href="Home.html">Home</a></li>
+        <li><a href="#">Country</a></li>
+        <li><a href="#">Festivals</a></li>
+        <li><a href="#">World</a></li>
+        <li><a href="#">Holidays</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <div class="card">
+      <h2>🌍 Current Weather</h2>
+      <p>Location: <strong>Delhi, India</strong></p>
+      <p>Temperature: <strong>30°C</strong></p>
+      <p>Condition: <strong>Partly Cloudy</strong></p>
+    </div>
+
+    <div class="card">
+      <h2>📅 Upcoming Holidays</h2>
+      <p>🪁 Makar Sankranti - Jan 14</p>
+      <p>🧨 Holi - Mar 14</p>
+      <p>🧵 Raksha Bandhan - Aug 9</p>
+    </div>
+
+    <div class="card">
+      <h2>🎉 Festival Countdown</h2>
+      <p>🎊 Diwali: 110 days remaining</p>
+      <p>🎄 Christmas: 175 days remaining</p>
+    </div>
+
+    <div class="card">
+      <h2>🕒 Live Time</h2>
+      <p><strong>Time:</strong> <span id="time">--:--:--</span></p>
+      <p><strong>Date:</strong> <span id="date">--</span></p>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 | Developed by <strong>Saurav Raj</strong> | All rights reserved
+  </footer>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("time").textContent = now.toLocaleTimeString();
+      document.getElementById("date").textContent = now.toLocaleDateString(undefined, {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</body>
+</html>

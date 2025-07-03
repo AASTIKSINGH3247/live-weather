@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Dashboard (Geolocation)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1e1e1e, #0f2027);
+      color: #ffffff;
+      overflow-x: hidden;
+      animation: fadeIn 2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #1f4037, #99f2c8);
+      padding: 15px 30px;
+      color: #fff;
+      animation: gradientMove 6s infinite alternate;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulse 2s infinite;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    nav ul li a:hover {
+      color: #ffda77;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 40px;
+    }
+
+    section {
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(0,0,0,0.3));
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 255, 255, 0.3);
+    }
+
+    .weather-box h2, .time-box h2, .holiday-box h2, .events-box h2 {
+      margin-bottom: 10px;
+      color: #ffd700;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1em;
+      width: 70%;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #333;
+      color: white;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 1em;
+      border: none;
+      background-color: #00bcd4;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0097a7;
+    }
+
+    #temp {
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #00eaff;
+      text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
+    }
+
+    #desc {
+      color: #cccccc;
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      font-size: 0.9em;
+      margin-top: 30px;
+    }
+
+    .event-ads {
+      background: #2d2d2d;
+      color: #f0f0f0;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      animation: floatBox 4s ease-in-out infinite;
+    }
+
+    @keyframes floatBox {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+      100% { transform: translateY(0); }
+    }
+
+    .event-ads ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .event-ads ul li {
+      margin-bottom: 10px;
+    }
+
+    @keyframes pulse {
+      0% { text-shadow: 0 0 5px #ffd700; }
+      50% { text-shadow: 0 0 20px #ffd700; }
+      100% { text-shadow: 0 0 5px #ffd700; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-cloud-sun"></i> Live Weather Dashboard</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="country.html">Country</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="Festivals.html">Festivals</a></li>
+        <li><a href="Holidays.html">Holidays</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <section class="weather-box">
+      <div class="input-group">
+        <input id="cityInput" placeholder="Enter city..." />
+        <button onclick="showWeather()">Enter</button>
+      </div>
+      <h2 id="city">Detecting your location...</h2>
+      <h3 id="temp">-- °C</h3>
+      <p id="desc">Weather description</p>
+    </section>
+
+    <section class="time-box">
+      <h2>Live Time & Date</h2>
+      <p><strong>Time:</strong> <span id="time">--:--:--</span></p>
+      <p><strong>Date:</strong> <span id="date">--</span></p>
+      <p><strong>Day:</strong> <span id="day">--</span></p>
+    </section>
+
+    <section class="holiday-box">
+      <h2>Upcoming Indian Holidays</h2>
+      <ul>
+        <li>🇮🇳 Republic Day - Jan 26</li>
+        <li>🌈 Holi - Mar 14</li>
+        <li>🎁 Raksha Bandhan - Aug 9</li>
+        <li>🐘 Ganesh Chaturthi - Aug 27</li>
+      </ul>
+    </section>
+
+    <section class="events-box">
+      <h2>🎊 2025 Festival Highlights & Cultural Events</h2>
+      <div class="event-ads">
+        <ul>
+          <li>🪁 Makar Sankranti – Jan 14: Kite flying in Gujarat & Maharashtra.</li>
+          <li>🎉 Holi – Mar 14: Color celebrations across India.</li>
+          <li>🕌 Eid al-Fitr – Mar 31*: Prayers & feasts nationwide.</li>
+          <li>🧵 Raksha Bandhan – Aug 9: Sibling celebrations.</li>
+          <li>🐘 Ganesh Chaturthi – Aug 27: Immersion parades in Mumbai.</li>
+          <li>🪔 Diwali – Oct 20: Fireworks and lights everywhere.</li>
+          <li>🎠 Pushkar Fair – Nov 1–9: Camels, bazaars, and folk fun.</li>
+          <li>🎄 Christmas – Dec 25: Goa and Kerala vibes.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 | Developed by <strong>Saurav Raj</strong> | All rights reserved
+  </footer>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("time").textContent = now.toLocaleTimeString();
+      document.getElementById("date").textContent = now.toLocaleDateString(undefined, {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      document.getElementById("day").textContent = now.toLocaleDateString(undefined, {
+        weekday: 'long'
+      });
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    function showWeather() {
+      const input = document.getElementById("cityInput").value.trim();
+      if (!input) return alert("Please enter a city name.");
+
+      document.getElementById("city").textContent = `📍 ${input}`;
+      document.getElementById("temp").textContent = "28 °C";
+      document.getElementById("desc").textContent = "Clear Sky";
+    }
+
+    function detectLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        document.getElementById("city").textContent = "Geolocation not supported.";
+      }
+
+      async function success(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+          const data = await response.json();
+          const address = data.address;
+          const city = address.city || address.town || address.village || "Unknown City";
+          const state = address.state || "";
+
+          document.getElementById("city").textContent = `📍 ${city}, ${state}`;
+        } catch (err) {
+          document.getElementById("city").textContent = `Lat: ${lat.toFixed(2)}°, Lon: ${lon.toFixed(2)}°`;
+        }
+
+        document.getElementById("temp").textContent = "27 °C";
+        document.getElementById("desc").textContent = "Partly Cloudy";
+      }
+
+      function error() {
+        document.getElementById("city").textContent = "Unable to detect location.";
+      }
+    }
+
+    detectLocation();
+  </script>
+</body>
+</html>
